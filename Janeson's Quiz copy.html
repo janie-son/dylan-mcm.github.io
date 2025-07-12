@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Janeson's Online Harms Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #fffdee;
+      text-align: center;
+      padding: 30px;
+      overflow-x: hidden;
+    }
+    .page {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 18px;
+      background-color: #ffe0f0;
+      border: 2px solid #ffb6c1;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    img.cat {
+      max-width: 31vw;
+      height: auto;
+      margin: 0 auto 20px auto;
+      display: block;}
+    .wave { animation: wave 2s infinite ease-in-out; }
+    .bounce { animation: bounce 1s infinite alternate; }
+    .jump { animation: jump 0.8s infinite ease-in-out; }
+
+    @keyframes wave {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(5deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes jump {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+    .question {
+      margin-top: 20px;
+    }
+
+    .feedback {
+      font-weight: bold;
+      color: #aa336a;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page active" id="page1">
+    <img src="baby cat 1.png" alt="Janeson waving" class="cat wave">
+    <h2>Can you help Janeson with his quiz?</h2>
+    <button onclick="startGame()">Start</button>
+  </div>
+
+  <div class="page" id="page2">
+    <img src="baby cat 2.png" alt="Janeson smiling" class="cat bounce">
+    <p>Hi I'm Janeson!! I have a quiz on online harms and I need to get them all right to win my fav chocolate! 🍫</p>
+    <p>Will you help me??</p>
+    <button onclick="goToPage(3)">Ok...</button>
+    <button onclick="goToPage(3)">Of course!</button>
+  </div>
+
+  <div class="page" id="page3">
+    <h3>📋 Janeson's Notes on Online Harms:</h3>
+    <ul style="text-align: left; display: inline-block;">
+      <li>🚨 Harm 1: Fishy Links! They're links that contain viruses and may even look legitimate. It's always important to think before clicking a link. Don't click it if you don't need to!!</li>
+      <li>⚠️ Harm 2: Sharing too much info online. If malicious people get ahold of your personal details, they can impersonate you or worse! It's okay to post some info online but not things like where you live, private photos, etc! You shouldn't give those to anyone! </li>
+      <li>😰 Harm 3: Cyberbullying. This is when people are mean to you online. If this happens, you should tell a trusted adult and not suffer alone!</li>
+    </ul>
+    <p><i>(You have 40 seconds to study this!)</i></p>
+    <button onclick="goToPage(4)">I'm ready now!</button>
+  </div>
+
+  <div class="page" id="page4">
+    <div id="quiz-container"></div>
+  </div>
+
+  <div class="page" id="page5">
+    <img src="baby cat 3.png" alt="Janeson jumping" class="cat jump">
+    <h2>Yay! Thanks for helping Janeson!</h2>
+    <p>He got his chocolate and he’s super happy! 🍫🐱</p>
+    <button onclick="goToPage(1)">Go back to start</button>
+  </div>
+
+  <audio id="bgm1" src="bgm1.mp3" loop></audio>
+  <audio id="bgm2" src="bgm2.mp3"></audio>
+  <audio id="bgm3" src="bgm3.mp3"></audio>
+
+  <script>
+    const bgm1 = document.getElementById("bgm1");
+    const bgm2 = document.getElementById("bgm2");
+    const bgm3 = document.getElementById("bgm3");
+
+    let currentQuestion = 0;
+
+    function startGame() {
+      bgm1.play().catch(() => {
+        alert("🔇 Tap to enable audio!");
+      });
+      goToPage(2);
+    }
+
+    function goToPage(pageNumber) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById('page' + pageNumber).classList.add('active');
+
+      if (pageNumber === 3) {
+        setTimeout(() => goToPage(4), 40000);
+      }
+      if (pageNumber === 4) {
+        currentQuestion = 0;
+        showQuestion();
+      }
+    }
+
+    const questions = [
+      {
+        question: "What should you do if someone sends you a weird link?",
+        options: ["Click it just once", "Ignore it", "Forward it to your friends"],
+        correct: 1
+      },
+      {
+        question: "Is it safe to share your home address online?",
+        options: ["Yes!", "Only with friends", "Nooo wayyy!"],
+        correct: 2
+      },
+      {
+        question: "What is cyberbullying?",
+        options: ["Helping friends online", "Being mean or threatening online", "Posting cat memes"],
+        correct: 1
+      },
+      {
+        question: "What can you do if cyberbullied?",
+        options: ["Just cry and move on", "Suffer in silence", "Tell a trusted adult or friend"],
+        correct: 2
+      },
+      {
+        question: "Someone asks for your pics online. What now?",
+        options: ["Send it immediately", "Say no!", "Ask for theirs first"],
+        correct: 1
+      }
+    ];
+
+    function showQuestion() {
+      const container = document.getElementById('quiz-container');
+      const q = questions[currentQuestion];
+      let html = `<div class="question">
+        <h3>Question ${currentQuestion + 1}</h3>
+        <p>${q.question}</p>
+        <div id="feedback"></div>
+        <div id="options">`;
+
+      q.options.forEach((opt, idx) => {
+        html += `<button onclick="checkAnswer(${idx})">${opt}</button><br>`;
+      });
+
+      html += `</div></div>`;
+      container.innerHTML = html;
+    }
+
+    function checkAnswer(selected) {
+      const feedback = document.getElementById("feedback");
+      const q = questions[currentQuestion];
+      const options = document.getElementById("options");
+
+      if (selected === q.correct) {
+        bgm2.currentTime = 0;
+        bgm2.play();
+        options.style.display = "none";
+        feedback.innerHTML = `<p class="feedback">Correctttt~ 🎉🎉</p>
+          <button onclick="nextQuestion()">Next ➡️</button>`;
+      } else {
+        bgm3.currentTime = 0;
+        bgm3.play();
+        options.style.display = "none";
+        feedback.innerHTML = `<p class="feedback">Oops! Try again 😿</p>
+          <button onclick="showQuestion()">Try Again 🔁</button>`;
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        goToPage(5);
+      }
+    }
+  </script>
+</body>
+</html>
